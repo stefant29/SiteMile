@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use Yii;
 use common\models\UserSearch;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 
 /**
@@ -11,6 +12,25 @@ use yii\web\Controller;
  */
 class UserController extends Controller
 {
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'only' => ['index'],
+                'rules' => [
+                    [
+                        'actions' => ['index'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ]
+            ],
+        ];
+    }
 
     /**
      * Lists all User models.
