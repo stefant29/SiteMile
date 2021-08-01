@@ -11,6 +11,8 @@ use yii\data\ActiveDataProvider;
  */
 class MessageSearch extends Message
 {
+    public $received_or_sent;
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +20,7 @@ class MessageSearch extends Message
     {
         return [
             [['id', 'from', 'to', 'read_at', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
-            [['message_text', 'subject'], 'safe'],
+            [['received_or_sent', 'message_text', 'subject'], 'safe'],
         ];
     }
 
@@ -40,11 +42,7 @@ class MessageSearch extends Message
      */
     public function search($params)
     {
-        $query = Message::find()->where([
-            'or',
-            ['from' => Yii::$app->user->id],
-            ['to' => Yii::$app->user->id],
-        ]);
+        $query = Message::find();
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -78,6 +76,18 @@ class MessageSearch extends Message
 
         $query->andFilterWhere(['like', 'message_text', $this->message_text])
             ->andFilterWhere(['like', 'subject', $this->subject]);
+
+        if (empty($this->received_or_sent)) {
+            $query->andFilterWhere([
+                'or',
+                ['from' => Yii::$app->user->id],
+                ['to' => Yii::$app->user->id],
+            ]);
+        } else {
+            $query->andFilterWhere([
+                $this->received_or_sent => Yii::$app->user->id
+            ]);
+        }
 
         return $dataProvider;
     }
