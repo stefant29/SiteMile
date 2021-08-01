@@ -1,60 +1,76 @@
 <p align="center">
-    <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
-    </a>
-    <h1 align="center">Yii 2 Advanced Project Template</h1>
+    <h1 align="center">SiteMile Messaging APP</h1>
     <br>
 </p>
 
-Yii 2 Advanced Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-developing complex Web applications with multiple tiers.
+To build and run the app, you need to:
+1. install `git bash` and `docker`
+2. create a file named "`docker-compose.yml`", paste the content from bellow 
+3. using `git bash`, go to the root of the new file ("`docker-compose.yml`") and run `docker-compose up`
+4. go to "`localhost:8886`" using `Google Chrome`
 
-The template includes three tiers: front end, back end, and console, each of which
-is a separate Yii application.
-
-The template is designed to work in a team development environment. It supports
-deploying the application in different environments.
-
-Documentation is at [docs/guide/README.md](docs/guide/README.md).
-
-[![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-app-advanced.svg)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-app-advanced.svg)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![build](https://github.com/yiisoft/yii2-app-advanced/workflows/build/badge.svg)](https://github.com/yiisoft/yii2-app-advanced/actions?query=workflow%3Abuild)
-
-DIRECTORY STRUCTURE
+DOCKER COMPOSE
 -------------------
 
 ```
-common
-    config/              contains shared configurations
-    mail/                contains view files for e-mails
-    models/              contains model classes used in both backend and frontend
-    tests/               contains tests for common classes    
-console
-    config/              contains console configurations
-    controllers/         contains console controllers (commands)
-    migrations/          contains database migrations
-    models/              contains console-specific model classes
-    runtime/             contains files generated during runtime
-backend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains backend configurations
-    controllers/         contains Web controller classes
-    models/              contains backend-specific model classes
-    runtime/             contains files generated during runtime
-    tests/               contains tests for backend application    
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
-frontend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains frontend configurations
-    controllers/         contains Web controller classes
-    models/              contains frontend-specific model classes
-    runtime/             contains files generated during runtime
-    tests/               contains tests for frontend application
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
-    widgets/             contains frontend widgets
-vendor/                  contains dependent 3rd-party packages
-environments/            contains environment-based overrides
+version: '3.3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: sitemile_mysql
+    environment:
+      MYSQL_DATABASE: "sitemile"
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: "sitemile"
+      # You can use whatever password you like
+      MYSQL_PASSWORD: "sitemile-password"
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: "password"
+      TZ: "Europe/London"
+    stdin_open: true
+    tty: true
+    restart: always
+    ports:
+      - "3336:3306"
+    volumes:
+      - "sitemile-db:/var/lib/mysql"
+    networks:
+      testing_net:
+        ipv4_address: 172.29.1.0
+
+  web:
+    image: stefant29/sitemile:beta3
+    container_name: sitemile_web
+    environment:
+      TZ: 'Europe/London'
+      MYSQL_ROOT_PASSWORD: "password"
+      DATABASE_HOST: "db"
+      USE_DEMO_DATA: "TRUE"
+    ports:
+      - "8886:80"
+    tmpfs:
+      - /tmp
+    stdin_open: true
+    tty: true
+    volumes:
+      - "c:\\www\\sitemile-files:/var/www/sitemile"
+    depends_on:
+      - db
+    entrypoint: bash -c "./var/www/install_sitemile.sh && apachectl -D FOREGROUND"
+    networks:
+      testing_net:
+        ipv4_address: 172.29.1.1
+
+networks:
+  testing_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.29.0.0/16
+
+volumes:
+  sitemile-db:
+
+
 ```
