@@ -9,6 +9,16 @@ To build and run the app, you need to:
 3. using `git bash`, go to the root of the new file ("`docker-compose.yml`") and run `docker-compose up`
 4. go to "`localhost:8886`" using `Google Chrome`
 
+Obs. If you encounter any errors with docker, a good old computer restart could solve them.
+Be sure to also delete everything created by docker and start fresh:
+```
+docker stop sitemile_web && docker stop sitemile_mysql
+docker rm sitemile_web && docker rm sitemile_mysql
+docker network prune
+```
+Also, delete folder `c:\www\sitemile-files` and its content.
+
+
 DOCKER COMPOSE
 -------------------
 
