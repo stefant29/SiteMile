@@ -21,6 +21,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'layout' => "{items}\n{pager}\n<span style='display:flex; justify-content:flex-end'>{summary}</span>",
+        'summary' => Yii::t("app", 'Showing users {range} of {total}.', [
+            'range' => '<b>{begin}-{end}</b>',
+            'total' => '<b>{totalCount}</b>'
+        ]),
+        'pager' => [
+            'options' => ['class' => 'pagination', 'style' => 'display:flex; justify-content:flex-end; width:100%; padding:0;'],
+        ],
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             'username',

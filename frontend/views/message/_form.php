@@ -42,7 +42,9 @@ use yii\widgets\ActiveForm;
 
     <div class="form-row col-md-12">
         <div class="col-md-12 form-group">
-            <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+            <span style="display:flex; justify-content:flex-end; width:100%; padding:0;">
+                <?= Html::submitButton('Send', ['class' => 'btn btn-success']) ?>
+            </span>
         </div>
     </div>
 
